@@ -1,28 +1,7 @@
-let ctx: CanvasRenderingContext2D;
-let outCtx: CanvasRenderingContext2D;
-let inputImage: ImageData;
-let mipmap: Array<ImageData>;
-let upscaled: Array<ImageData>;
-let imageCounter: number;
+// adapted from: https://github.com/golanlevin/image_inpainting_processing/blob/master/pyramid_inpainting/pyramid_inpainting.pde
+
 const nLevels = 9;
-
-
-function setup(ctx: CanvasRenderingContext2D): void {
-	imageCounter = 0;
-
-	const { width, height } = ctx.canvas;
-	inputImage = ctx.getImageData(0, 0, width, height);
-
-	for (let i = 0; i < nLevels; i++) {
-		const twopow = Math.pow(2, i);
-		mipmap[i] = ctx.createImageData(width / twopow, height / twopow);
-	}
-
-	for (let i = 1; i < nLevels; i++) { // Caution: no 0th element.
-		const twopowm1 = Math.pow(2, i - 1);
-		upscaled[i] = ctx.createImageData(width / twopowm1, height / twopowm1);
-	}
-}
+const maskAlpha = 0;
 
 
 function indexFromXY(x: number, y: number, width: number) {
@@ -78,8 +57,25 @@ function blerp(
 }
 
 
-function draw(): void {
-	const maskAlpha = 0;
+function inpaint(
+	ctx: CanvasRenderingContext2D,
+	outCtx: CanvasRenderingContext2D,
+): void {
+	const { width, height } = ctx.canvas;
+	const inputImage = ctx.getImageData(0, 0, width, height);
+
+	let mipmap: Array<ImageData> = new Array(nLevels);
+	let upscaled: Array<ImageData> = new Array(nLevels);
+
+	for (let i = 0; i < nLevels; i++) {
+		const twopow = Math.pow(2, i);
+		mipmap[i] = ctx.createImageData(width / twopow, height / twopow);
+	}
+
+	for (let i = 1; i < nLevels; i++) { // Caution: no 0th element.
+		const twopowm1 = Math.pow(2, i - 1);
+		upscaled[i] = ctx.createImageData(width / twopowm1, height / twopowm1);
+	}
 
 	//-------------------
 	// Copy the first level, at the original scale.
