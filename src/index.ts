@@ -69,12 +69,18 @@ function inpaint(
 
 	for (let i = 0; i < nLevels; i++) {
 		const twopow = Math.pow(2, i);
-		mipmap[i] = ctx.createImageData(width / twopow, height / twopow);
+		mipmap[i] = ctx.createImageData(
+			Math.ceil(width / twopow),
+			Math.ceil(height / twopow)
+		);
 	}
 
 	for (let i = 1; i < nLevels; i++) { // Caution: no 0th element.
 		const twopowm1 = Math.pow(2, i - 1);
-		upscaled[i] = ctx.createImageData(width / twopowm1, height / twopowm1);
+		upscaled[i] = ctx.createImageData(
+			Math.ceil(width / twopowm1),
+			Math.ceil(height / twopowm1)
+		);
 	}
 
 	//-------------------
