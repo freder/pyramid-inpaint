@@ -6,27 +6,34 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>inpaint</title>
 		<style>
-			img, #in {
+			#in {
 				display: none;
 			}
 		</style>
 	</head>
 	<body>
-		<img src="/image_inpainting_processing/pyramid_inpainting/data/00000.png">
+		<img src="/00000.png">
 		<canvas id="in"></canvas>
 		<canvas id="out"></canvas>
-		<script src="./dist/index.js"></script>
-		<script>
+		<script type="module">
+			import {
+				inpaint,
+				rgbaAtIndex,
+				setRgbaAtIndex
+			} from '/dist/index.js';
+
 			const img = document.querySelector('img');
 
 			const canvas = document.querySelector('#in');
 			canvas.width = img.width;
 			canvas.height = img.height;
 			const ctx = canvas.getContext('2d');
+
+			// get image data
 			ctx.drawImage(img, 0, 0);
+			const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
 			// mask: green → alpha
-			const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 			for (let i = 0; i < imgData.data.length; i += 4) {
 				const rgba = rgbaAtIndex(imgData, i);
 				if (rgba[0] === 0 && rgba[1] === 255 && rgba[2] === 0) {
@@ -36,11 +43,10 @@
 			ctx.putImageData(imgData, 0, 0);
 
 			const canvasOut = document.querySelector('#out');
-			canvasOut.width = img.width * 2;
-			canvasOut.height = img.height * 2;
+			canvasOut.width = img.width;
+			canvasOut.height = img.height;
 			const ctxOut = canvasOut.getContext('2d');
 
-			inpaint(ctx, ctxOut);
 			const levels = 9;
 			inpaint(ctx, ctxOut, levels);
 		</script>

@@ -3,19 +3,19 @@ const maskAlpha = 0;
 function indexFromXY(x, y, width) {
     return y * (width * 4) + (x * 4);
 }
-function rgbaAtIndex(imgData, idx) {
+export function rgbaAtIndex(imgData, idx) {
     const r = imgData.data[idx + 0];
     const g = imgData.data[idx + 1];
     const b = imgData.data[idx + 2];
     const a = imgData.data[idx + 3];
     return [r, g, b, a];
 }
-function rgbaAtXY(imgData, x, y) {
+export function rgbaAtXY(imgData, x, y) {
     const { width } = imgData;
     const idx = indexFromXY(x, y, width);
     return rgbaAtIndex(imgData, idx);
 }
-function setRgbaAtIndex(dst, dstIndex, dstColor) {
+export function setRgbaAtIndex(dst, dstIndex, dstColor) {
     dst.data[dstIndex + 0] = dstColor[0];
     dst.data[dstIndex + 1] = dstColor[1];
     dst.data[dstIndex + 2] = dstColor[2];
@@ -27,11 +27,11 @@ function lerp2(s, e, t) {
 function blerp(c00, c10, c01, c11, tx, ty) {
     return lerp2(lerp2(c00, c10, tx), lerp2(c01, c11, tx), ty);
 }
-function inpaint(ctx, outCtx, nLevels = 9) {
+export function inpaint(ctx, outCtx, nLevels = 9) {
     const { width, height } = ctx.canvas;
     const inputImage = ctx.getImageData(0, 0, width, height);
-    let mipmap = new Array(nLevels);
-    let upscaled = new Array(nLevels);
+    const mipmap = new Array(nLevels);
+    const upscaled = new Array(nLevels);
     for (let i = 0; i < nLevels; i++) {
         const twopow = Math.pow(2, i);
         mipmap[i] = ctx.createImageData(Math.ceil(width / twopow), Math.ceil(height / twopow));
@@ -162,13 +162,14 @@ function inpaint(ctx, outCtx, nLevels = 9) {
     }
     //-------------------
     // Draw the results
-    let mipY = inputImage.height;
-    outCtx.putImageData(inputImage, 0, 0);
-    outCtx.putImageData(mipmap[0], 0, mipY);
-    const mipX = mipmap[0].width;
-    for (let i = 1; i < nLevels; i++) {
-        outCtx.putImageData(mipmap[i], mipX, mipY);
-        mipY += mipmap[i].height;
-    }
+    // let mipY = inputImage.height;
+    // outCtx.putImageData(inputImage, 0, 0);
+    // outCtx.putImageData(mipmap[0], 0, mipY);
+    outCtx.putImageData(mipmap[0], 0, 0);
+    // const mipX = mipmap[0].width;
+    // for (let i = 1; i < nLevels; i++) {
+    // 	outCtx.putImageData(mipmap[i], mipX, mipY);
+    // 	mipY += mipmap[i].height;
+    // }
 }
 //# sourceMappingURL=index.js.map

@@ -8,7 +8,7 @@ function indexFromXY(x: number, y: number, width: number) {
 }
 
 
-function rgbaAtIndex(imgData: ImageData, idx: number): Array<number> {
+export function rgbaAtIndex(imgData: ImageData, idx: number): Array<number> {
 	const r = imgData.data[idx + 0];
 	const g = imgData.data[idx + 1];
 	const b = imgData.data[idx + 2];
@@ -17,14 +17,14 @@ function rgbaAtIndex(imgData: ImageData, idx: number): Array<number> {
 }
 
 
-function rgbaAtXY(imgData: ImageData, x: number, y: number): Array<number> {
+export function rgbaAtXY(imgData: ImageData, x: number, y: number): Array<number> {
 	const { width } = imgData;
 	const idx = indexFromXY(x, y, width);
 	return rgbaAtIndex(imgData, idx);
 }
 
 
-function setRgbaAtIndex(
+export function setRgbaAtIndex(
 	dst: ImageData,
 	dstIndex: number,
 	dstColor: Array<number>
@@ -56,16 +56,16 @@ function blerp(
 }
 
 
-function inpaint(
+export function inpaint(
 	ctx: CanvasRenderingContext2D,
 	outCtx: CanvasRenderingContext2D,
-	nLevels: number = 9
+	nLevels = 9
 ): void {
 	const { width, height } = ctx.canvas;
 	const inputImage = ctx.getImageData(0, 0, width, height);
 
-	let mipmap: Array<ImageData> = new Array(nLevels);
-	let upscaled: Array<ImageData> = new Array(nLevels);
+	const mipmap: Array<ImageData> = new Array(nLevels);
+	const upscaled: Array<ImageData> = new Array(nLevels);
 
 	for (let i = 0; i < nLevels; i++) {
 		const twopow = Math.pow(2, i);
@@ -95,8 +95,8 @@ function inpaint(
 	//-------------------
 	// Analysis: generate the subsequent mipmap levels
 	for (let level = 1; level < nLevels; level++) {
-	  	const srcMipmap = mipmap[level - 1];
-	  	const dstMipmap = mipmap[level];
+		const srcMipmap = mipmap[level - 1];
+		const dstMipmap = mipmap[level];
 
 		srcW = srcMipmap.width;
 		srcH = srcMipmap.height;
@@ -222,12 +222,13 @@ function inpaint(
 
 	//-------------------
 	// Draw the results
-	let mipY = inputImage.height;
-	outCtx.putImageData(inputImage, 0, 0);
-	outCtx.putImageData(mipmap[0], 0, mipY);
-	const mipX = mipmap[0].width;
-	for (let i = 1; i < nLevels; i++) {
-		outCtx.putImageData(mipmap[i], mipX, mipY);
-		mipY += mipmap[i].height;
-	}
+	// let mipY = inputImage.height;
+	// outCtx.putImageData(inputImage, 0, 0);
+	// outCtx.putImageData(mipmap[0], 0, mipY);
+	outCtx.putImageData(mipmap[0], 0, 0);
+	// const mipX = mipmap[0].width;
+	// for (let i = 1; i < nLevels; i++) {
+	// 	outCtx.putImageData(mipmap[i], mipX, mipY);
+	// 	mipY += mipmap[i].height;
+	// }
 }
