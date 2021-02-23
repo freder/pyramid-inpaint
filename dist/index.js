@@ -1,5 +1,4 @@
 // adapted from: https://github.com/golanlevin/image_inpainting_processing/blob/master/pyramid_inpainting/pyramid_inpainting.pde
-const nLevels = 9;
 const maskAlpha = 0;
 function indexFromXY(x, y, width) {
     return y * (width * 4) + (x * 4);
@@ -28,7 +27,7 @@ function lerp2(s, e, t) {
 function blerp(c00, c10, c01, c11, tx, ty) {
     return lerp2(lerp2(c00, c10, tx), lerp2(c01, c11, tx), ty);
 }
-function inpaint(ctx, outCtx) {
+function inpaint(ctx, outCtx, nLevels = 9) {
     const { width, height } = ctx.canvas;
     const inputImage = ctx.getImageData(0, 0, width, height);
     let mipmap = new Array(nLevels);

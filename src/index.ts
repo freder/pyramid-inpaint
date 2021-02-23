@@ -1,6 +1,5 @@
 // adapted from: https://github.com/golanlevin/image_inpainting_processing/blob/master/pyramid_inpainting/pyramid_inpainting.pde
 
-const nLevels = 9;
 const maskAlpha = 0;
 
 
@@ -60,6 +59,7 @@ function blerp(
 function inpaint(
 	ctx: CanvasRenderingContext2D,
 	outCtx: CanvasRenderingContext2D,
+	nLevels: number = 9
 ): void {
 	const { width, height } = ctx.canvas;
 	const inputImage = ctx.getImageData(0, 0, width, height);
