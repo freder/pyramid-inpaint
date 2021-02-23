@@ -9,3 +9,5 @@ npm run build
 ## demo
 
 http serve currect directory, open `/index.html`
+
+![](./screenshot.jpg)
